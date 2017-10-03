@@ -27,15 +27,8 @@ class TwitterAuth(resourcePath: String) {
 
 object Ex1_TwitPerSec {
   def main(args: Array[String]): Unit = {
-    val twitterAuthFilePath = args(0)
-    val twitterAuth = new TwitterAuth(twitterAuthFilePath)
+    setTwitterApps(args(0))
 
-    System.setProperty("twitter4j.oauth.consumerKey", twitterAuth.CONSUMER_API_KEY)
-    System.setProperty("twitter4j.oauth.consumerSecret", twitterAuth.CONSUMER_API_SECRET)
-    System.setProperty("twitter4j.oauth.accessToken", twitterAuth.ACCESS_TOKEN)
-    System.setProperty("twitter4j.oauth.accessTokenSecret", twitterAuth.ACCESS_TOKEN_SECRET)
-
-    // Recompute the top hashtags every 1 second
     val conf = new SparkConf().setAppName("twitPerSec").setMaster("local[2]")
     val slideInterval = new Duration(1 * 1000)
     val ssc = new StreamingContext(conf, slideInterval)
@@ -47,5 +40,15 @@ object Ex1_TwitPerSec {
 
     ssc.start()
     ssc.awaitTermination()
+  }
+
+  private def setTwitterApps(path: String) = {
+    val twitterAuthFilePath = path
+    val twitterAuth = new TwitterAuth(twitterAuthFilePath)
+
+    System.setProperty("twitter4j.oauth.consumerKey", twitterAuth.CONSUMER_API_KEY)
+    System.setProperty("twitter4j.oauth.consumerSecret", twitterAuth.CONSUMER_API_SECRET)
+    System.setProperty("twitter4j.oauth.accessToken", twitterAuth.ACCESS_TOKEN)
+    System.setProperty("twitter4j.oauth.accessTokenSecret", twitterAuth.ACCESS_TOKEN_SECRET)
   }
 }
