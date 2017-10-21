@@ -16,12 +16,10 @@ object Ex3_TwitUserUpdateState {
     val ssc = new StreamingContext(conf, slideInterval)
     ssc.sparkContext.setLogLevel("Error")
 
-    // 작업 도중 상태 값이 유실되는 것을 방지하기 위한 저장소 설정
-    // updateStateByKey와 같이 상태를 유지하는 연산을 다룰 때는 checkpoint를 지정해야 합니다.
+    // set checkpoint directory
     ssc.checkpoint("./tmp")
 
-    // 상태 업데이트를 위한 함수 정의
-    // currentValue 키의 상태값을 나타냅니다.
+    // update state function
     val updateFunc = (newValues: Seq[Long], currentValue: Option[Long]) => Option(currentValue.getOrElse(0L) + newValues.sum)
 
     val auth = Some(new OAuthAuthorization(new ConfigurationBuilder().build()))
